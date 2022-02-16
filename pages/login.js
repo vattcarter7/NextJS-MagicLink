@@ -1,4 +1,5 @@
 import { useRouter } from 'next/router';
+import { Magic } from 'magic-sdk';
 
 export default function Login() {
   const router = useRouter();
@@ -12,17 +13,20 @@ export default function Login() {
       process.env.NEXT_PUBLIC_MAGIC_PUB_KEY
     ).auth.loginWithMagicLink({ email: elements.email.value });
 
-    // Once we have the token from magic,
-    // update our own database
+    // Once we have the did from magic, login with our own API
+    const authRequest = await fetch('/api/login', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${did}` }
+    });
 
-    // const authRequest = await fetch()
-
-    // if (authRequest.ok) {
-    // We successfully logged in, our API
-    // set authorization cookies and now we
-    // can redirect to the dashboard!
-    // router.push('/dashboard')
-    // } else { /* handle errors */ }
+    if (authRequest.ok) {
+      // We successfully logged in, our API
+      // set authorization cookies and now we
+      // can redirect to the dashboard!
+      router.push('/dashboard');
+    } else {
+      /* handle errors */
+    }
   };
 
   return (
